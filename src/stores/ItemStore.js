@@ -3,18 +3,12 @@ import { action, computed, observable } from 'mobx'
 const config = {
     SELECT_NEW_ITEM: false,
     ROOT_ID: 'root',
+    ROOT_LABEL: 'Home',
 }
 
 class ItemStore {
     constructor() {
-        this.addItem({
-            id: 'root',
-            title: 'Home',
-            parentId: 0,
-            selected: true,
-            isRoot: true,
-            showChildren: true,
-        })
+        this._createRoot()
     }
 
     @observable
@@ -48,11 +42,6 @@ class ItemStore {
         return newItem.id
     }
 
-    __doNotModify = (item) => item
-
-    __findAndApply = (id, modifier, modifierForNot = this.__doNotModify) => this._list = this._list
-        .map(item => item.id === id ? modifier(item) : modifierForNot(item))
-
     @action
     removeItemById = (id) => {
         if (id === config.ROOT_ID) {
@@ -60,23 +49,23 @@ class ItemStore {
         }
 
         this.selectPreviousSibling()
-        this.__findAndApply(id, (item) => ({ ...item, deleted: true }))
+        this._findItemAndApply(id, (item) => ({ ...item, deleted: true }))
     }
 
     @action
-    selectItemById = (id) => this.__findAndApply(id,
+    selectItemById = (id) => this._findItemAndApply(id,
         (item) => ({ ...item, selected: true }),
         (item) => ({ ...item, selected: false })
     )
 
     @action
-    setChildrenVisibilityById = (id, showChildren) => this.__findAndApply(id, (item) => ({
+    setChildrenVisibilityById = (id, showChildren) => this._findItemAndApply(id, (item) => ({
         ...item,
         showChildren,
     }))
 
     @action
-    updateItemById = (id, newItem) => this.__findAndApply(id, (oldItem) => ({ ...newItem, id }))
+    updateItemById = (id, newItem) => this._findItemAndApply(id, (oldItem) => ({ ...newItem, id }))
 
     @computed
     get selectedItem() {
@@ -92,27 +81,19 @@ class ItemStore {
     findItemsByParentId = (parentId) => this.list
         .filter(item => item.parentId === parentId)
 
-
-    __getPrevious = (list, selectedId) => {
-        return list.reduce(({ previous, found }, current) => ({
-            found: found || current === selectedId,
-            previous: found || current === selectedId ? previous : current,
-        }), { previous: null, found: false })
-    }
-
     @action
     selectPreviousSibling = () => {
         const {
-            previous,
+            itemId,
             found,
-        } = this.__getPrevious(this
+        } = this._getPreviousFromList(this
             .findItemsByParentId(this.selectedItem.parentId)
             .map(item => item.id),
             this.selectedItem.id)
 
-        if (found && previous) {
-            this.selectItemById(previous)
-        } else if (!previous && this.selectedItem.id !== config.ROOT_ID) {
+        if (found && itemId) {
+            this.selectItemById(itemId)
+        } else if (!itemId && this.selectedItem.id !== config.ROOT_ID) {
             this.selectItemById(this.selectedItem.parentId)
         }
     }
@@ -120,17 +101,16 @@ class ItemStore {
     @action
     selectNextSibling = () => {
         const {
-            previous,
+            itemId,
             found,
-        } = this.__getPrevious(this
+        } = this._getNextFromList(this
             .findItemsByParentId(this.selectedItem.parentId)
-            .map(item => item.id)
-            .reverse(),
+            .map(item => item.id),
             this.selectedItem.id)
 
-        if (found && previous) {
-            this.selectItemById(previous)
-        } else if (!previous) {
+        if (found && itemId) {
+            this.selectItemById(itemId)
+        } else if (!itemId) {
             console.log('selecting selectFirstChild')
             this.selectFirstChild()
         }
@@ -157,6 +137,33 @@ class ItemStore {
     @action
     removeSelected = () => {
         this.removeItemById(this.selectedItem.id)
+    }
+
+    _doNotModify = (item) => item
+
+    _findItemAndApply = (id, modifier, modifierIfNotItem = this._doNotModify) =>
+        this._list = this._list
+            .map(item => item.id === id
+                ? modifier(item)
+                : modifierIfNotItem(item))
+
+    _getPreviousFromList = (list, selectedId) => list
+        .reduce(({ itemId, found }, current) => ({
+            found: found || current === selectedId,
+            itemId: found || current === selectedId ? itemId : current,
+        }), { itemId: null, found: false })
+
+    _getNextFromList = (list, selectedId) => this._getPreviousFromList(list.reverse(), selectedId)
+
+    _createRoot() {
+        this.addItem({
+            id: config.ROOT_ID,
+            title: config.ROOT_LABEL,
+            parentId: 0,
+            selected: true,
+            isRoot: true,
+            showChildren: true,
+        })
     }
 }
 
