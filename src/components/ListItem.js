@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
 class ListItem extends Component {
     editItem = (e = false) => {
@@ -57,4 +57,4 @@ class ListItem extends Component {
     }
 }
 
-export default ListItem;
+export default ListItem

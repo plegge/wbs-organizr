@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import './App.css';
+import './App.css'
 import ListItem from './components/ListItem'
 import ItemStore, { ROOT_ID } from './stores/ItemStore'
 
@@ -16,6 +16,7 @@ class App extends Component {
             'ArrowRight': itemStore.selectFirstChild,
             'Enter': this.addSubItem,
             'Backspace': itemStore.removeSelected,
+            'Delete': itemStore.removeSelected,
         }
 
         if (Object.keys(commands).includes(e.key)) {
@@ -60,4 +61,4 @@ class App extends Component {
     }
 }
 
-export default App;
+export default App
