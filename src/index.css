@@ -1,0 +1,43 @@
+body {
+  margin: 0;
+  padding: 40px;
+  font-family: sans-serif;
+}
+
+.ListItem {
+    border: 1px solid #999;
+    display: inline-block;
+    padding: 10px;
+    position: relative;
+    margin-top: 10px;
+}
+
+ul,
+ul ul {
+    -webkit-margin-before: 0;
+    -webkit-margin-after: 0;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    -webkit-padding-start: 40px;
+}
+
+.ListItem .title {
+    display: block;
+}
+
+.ListItem .actions {
+    position: absolute;
+    bottom: -10px;
+    left: 0px;
+    right: 0px;
+    text-align: center;}
+
+.ListItem .actions button {
+    display: inline-block;
+    font-size: 10px;
+    border: 1px solid #333;
+}
+
+.ListItem.selected {
+    border: 1px solid #000;
+}
