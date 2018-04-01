@@ -2,11 +2,10 @@ import { action, computed, observable } from 'mobx'
 
 const config = {
     SELECT_NEW_ITEM: false,
+    ROOT_ID: 'root',
 }
 
 class ItemStore {
-    static ROOT_ID = 'root'
-
     constructor() {
         this.addItem({
             id: 'root',
@@ -56,7 +55,7 @@ class ItemStore {
 
     @action
     removeItemById = (id) => {
-        if (id === ItemStore.ROOT_ID) {
+        if (id === config.ROOT_ID) {
             return
         }
 
@@ -113,7 +112,7 @@ class ItemStore {
 
         if (found && previous) {
             this.selectItemById(previous)
-        } else if (!previous && this.selectedItem.id !== ItemStore.ROOT_ID) {
+        } else if (!previous && this.selectedItem.id !== config.ROOT_ID) {
             this.selectItemById(this.selectedItem.parentId)
         }
     }
@@ -139,7 +138,7 @@ class ItemStore {
 
     @action
     selectParent = () => {
-        if (this.selectedItem.id !== ItemStore.ROOT_ID) {
+        if (this.selectedItem.id !== config.ROOT_ID) {
             this.selectItemById(this.selectedItem.parentId)
         }
     }
@@ -162,3 +161,4 @@ class ItemStore {
 }
 
 export default ItemStore
+export const ROOT_ID = config.ROOT_ID

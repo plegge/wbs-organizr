@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import './App.css';
 import ListItem from './components/ListItem'
-import ItemStore from './stores/ItemStore'
+import ItemStore, { ROOT_ID } from './stores/ItemStore'
 
 const itemStore = new ItemStore()
 
@@ -49,7 +49,7 @@ class App extends Component {
     }
 
     render() {
-        const rootItem = itemStore.findItemById(ItemStore.ROOT_ID)
+        const rootItem = itemStore.findItemById(ROOT_ID)
         return <div className="App" onKeyPress={this.handleKeys}>
             <ListItem item={rootItem} id={rootItem.id} key={rootItem.id} store={itemStore} addSubItem={this.addSubItem} />
         </div>
