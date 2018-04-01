@@ -51,7 +51,11 @@ class App extends Component {
     render() {
         const rootItem = itemStore.findItemById(ROOT_ID)
         return <div className="App" onKeyPress={this.handleKeys}>
-            <ListItem item={rootItem} id={rootItem.id} key={rootItem.id} store={itemStore} addSubItem={this.addSubItem} />
+            <ListItem item={rootItem}
+                id={rootItem.id}
+                key={rootItem.id}
+                store={itemStore}
+                addSubItem={this.addSubItem} />
         </div>
     }
 }
