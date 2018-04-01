@@ -14,9 +14,9 @@ class App extends Component {
             'ArrowDown': itemStore.selectNextSibling,
             'ArrowLeft': itemStore.selectParent,
             'ArrowRight': itemStore.selectFirstChild,
-            'Enter': this.addSubItem,
             'Backspace': itemStore.removeSelected,
             'Delete': itemStore.removeSelected,
+            'Enter': this.addSubItem,
         }
 
         if (Object.keys(commands).includes(e.key)) {
