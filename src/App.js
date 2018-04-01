@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import './App.css';
-import ListItem from './models/ListItem'
+import ListItem from './components/ListItem'
 import ItemStore from './stores/ItemStore'
 
 const itemStore = new ItemStore()

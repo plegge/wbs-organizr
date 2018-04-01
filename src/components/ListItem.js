@@ -21,7 +21,7 @@ class ListItem extends Component {
         this.props.addSubItem(this.props.id)
     }
 
-    toggleShowChildren = () => this.props
+    toggleChildrenVisibility = () => this.props
         .store
         .setChildrenVisibilityById(this.props.id, !this.props.item.showChildren)
 
@@ -38,7 +38,12 @@ class ListItem extends Component {
 
         return <div>
             <div className={classNames}>
-                <span className="title" onClick={this.editItem}>{`${item.title}`} <a onClick={this.toggleShowChildren}>({subItems.length})</a></span>
+                <span className="title" onClick={this.editItem}>
+                    {`${item.title}`}
+                    <a onClick={this.toggleChildrenVisibility}>
+                        ({subItems.length})
+                    </a>
+                </span>
 
                 {item.selected && <span className="actions">
                     <button onClick={this.addSubItem}>+</button>
