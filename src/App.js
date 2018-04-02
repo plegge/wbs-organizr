@@ -20,8 +20,14 @@ class App extends Component {
                 || itemStore.selectNextSibling()
                 || itemStore.selectNextParentSibling()
             },
-            'ArrowLeft': itemStore.selectParent,
-            'ArrowRight': itemStore.selectFirstChild,
+            'ArrowLeft': () => {
+                itemStore.hideChildrenFromSelected()
+                || itemStore.selectParent()
+            },
+            'ArrowRight': () => {
+                itemStore.showChildrenFromSelected()
+                || itemStore.selectFirstChild()
+            },
             'Backspace': itemStore.removeSelected,
             'Delete': itemStore.removeSelected,
             'Enter': this.addSubItem,

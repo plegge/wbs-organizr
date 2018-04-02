@@ -35,12 +35,16 @@ class ItemStore {
             selected: selected || false,
             isRoot: isRoot || false,
             deleted: deleted || false,
-            showChildren: showChildren || true,
+            showChildren: showChildren || false,
         }
 
         this._list = this._list.concat(newItem)
 
         config.SELECT_NEW_ITEM && this.selectItemById(newItem.id)
+
+        if (parentId) {
+            this.setChildrenVisibilityById(parentId, true)
+        }
 
         return newItem.id
     }
@@ -52,6 +56,8 @@ class ItemStore {
         }
 
         this.selectPreviousSibling()
+            || this.selectParent()
+
         this._findItemAndApply(id, (item) => ({ ...item, deleted: true }))
     }
 
@@ -64,7 +70,7 @@ class ItemStore {
     @action
     setChildrenVisibilityById = (id, showChildren) => this._findItemAndApply(id, (item) => ({
         ...item,
-        showChildren,
+        showChildren: showChildren && (this.findItemsByParentId(id).length > 0),
     }))
 
     @action
@@ -175,6 +181,18 @@ class ItemStore {
         this.removeItemById(this.selectedItem.id)
     }
 
+    showChildrenFromSelected = (item = this.selectedItem) => {
+        return (item.showChildren)
+            ? false
+            : this.setChildrenVisibilityById(item.id, true) && true
+    }
+
+    hideChildrenFromSelected = (item = this.selectedItem) => {
+        return (!item.showChildren)
+            ? false
+            : this.setChildrenVisibilityById(item.id, false) && true
+    }
+
     _findSibling = (currentItem, direction) => {
         const siblings = this._getSiblingsIdList(currentItem)
         const getList = direction === NEXT_SIBLING
@@ -222,10 +240,10 @@ class ItemStore {
         this.addItem({
             id: config.ROOT_ID,
             title: config.ROOT_LABEL,
-            parentId: 0,
+            parentId: null,
             selected: true,
             isRoot: true,
-            showChildren: true,
+            showChildren: false,
         })
     }
 }
