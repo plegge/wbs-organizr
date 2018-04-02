@@ -58,6 +58,7 @@ class ItemStore {
         }
 
         this.selectPreviousSibling()
+            || this.selectNextSibling()
             || this.selectParent()
 
         this._findItemAndApply(id, (item) => ({ ...item, deleted: true }))
