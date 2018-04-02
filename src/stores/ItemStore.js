@@ -1,4 +1,6 @@
-import { action, computed, observable } from 'mobx'
+import { action, computed, configure, observable } from 'mobx'
+
+configure({ enforceActions: true })
 
 const NEXT_SIBLING = 'NEXT_SIBLING'
 const PREVIOUS_SIBLING = 'PREVIOUS_SIBLING'
@@ -74,7 +76,12 @@ class ItemStore {
     }))
 
     @action
-    updateItemById = (id, newItem) => this._findItemAndApply(id, (oldItem) => ({ ...newItem, id }))
+    updateItemById = (id, newItem) =>
+        this._findItemAndApply(id, (oldItem) => ({
+            ...oldItem,
+            ...newItem,
+            id,
+        }))
 
     @computed
     get selectedItem() {
@@ -181,12 +188,14 @@ class ItemStore {
         this.removeItemById(this.selectedItem.id)
     }
 
+    @action
     showChildrenFromSelected = (item = this.selectedItem) => {
         return (item.showChildren)
             ? false
             : this.setChildrenVisibilityById(item.id, true) && true
     }
 
+    @action
     hideChildrenFromSelected = (item = this.selectedItem) => {
         return (!item.showChildren)
             ? false
