@@ -1,5 +1,8 @@
 import { action, computed, observable } from 'mobx'
 
+const NEXT_SIBLING = 'NEXT_SIBLING'
+const PREVIOUS_SIBLING = 'PREVIOUS_SIBLING'
+
 const config = {
     SELECT_NEW_ITEM: false,
     ROOT_ID: 'root',
@@ -82,38 +85,34 @@ class ItemStore {
         .filter(item => item.parentId === parentId)
 
     @action
-    selectPreviousSibling = () => {
-        const {
-            itemId,
-            found,
-        } = this._getPreviousFromList(this
-            .findItemsByParentId(this.selectedItem.parentId)
-            .map(item => item.id),
-            this.selectedItem.id)
-
-        if (found && itemId) {
-            this.selectItemById(itemId)
-        } else if (!itemId && this.selectedItem.id !== config.ROOT_ID) {
-            this.selectItemById(this.selectedItem.parentId)
-        }
+    selectPreviousSibling = (currentItem = false) => {
+        return this._selectSibling(currentItem || this.selectedItem, PREVIOUS_SIBLING)
     }
 
     @action
-    selectNextSibling = () => {
-        const {
-            itemId,
-            found,
-        } = this._getNextFromList(this
-            .findItemsByParentId(this.selectedItem.parentId)
-            .map(item => item.id),
-            this.selectedItem.id)
+    selectNextSibling = (currentItem = false) => {
+        return this._selectSibling(currentItem || this.selectedItem, NEXT_SIBLING)
+    }
 
-        if (found && itemId) {
-            this.selectItemById(itemId)
-        } else if (!itemId) {
-            console.log('selecting selectFirstChild')
-            this.selectFirstChild()
+    @action
+    selectNextParentSibling = (currentItem = this.selectedItem) => {
+        if (currentItem.id === config.ROOT_ID) {
+            return null
         }
+
+        let parent = this.findItemById(currentItem.parentId)
+        let sibling = this._findSibling(parent, NEXT_SIBLING)
+
+        while (sibling === null && parent.id !== config.ROOT_ID) {
+            parent = this.findItemById(parent.parentId)
+            sibling = this._findSibling(parent, NEXT_SIBLING)
+        }
+
+        if (sibling) {
+            this.selectItemById(sibling)
+        }
+
+        return sibling
     }
 
     @action
@@ -132,11 +131,36 @@ class ItemStore {
         if (childId !== false) {
             this.selectItemById(childId)
         }
+
+        return childId
     }
 
     @action
     removeSelected = () => {
         this.removeItemById(this.selectedItem.id)
+    }
+
+    _findSibling = (currentItem, direction) => {
+        const siblings = this._getSiblingsIdList(currentItem)
+        const getList = direction === NEXT_SIBLING
+            ? this._getNextFromList
+            : this._getPreviousFromList
+
+        const { itemId, found } = getList(siblings, currentItem.id)
+
+        return found && itemId
+            ? itemId
+            : null
+    }
+
+    _selectSibling = (currentItem, direction) => {
+        const itemId = this._findSibling(currentItem, direction)
+
+        if (itemId) {
+            this.selectItemById(itemId)
+        }
+
+        return itemId
     }
 
     _doNotModify = (item) => item
@@ -153,7 +177,11 @@ class ItemStore {
             itemId: found || current === selectedId ? itemId : current,
         }), { itemId: null, found: false })
 
-    _getNextFromList = (list, selectedId) => this._getPreviousFromList(list.reverse(), selectedId)
+    _getNextFromList = (list, selectedId) => this
+        ._getPreviousFromList(list.reverse(), selectedId)
+
+    _getSiblingsIdList = (item) => this.findItemsByParentId(item.parentId)
+        .map(sibling => sibling.id)
 
     _createRoot() {
         this.addItem({

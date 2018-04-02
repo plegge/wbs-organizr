@@ -10,8 +10,15 @@ const itemStore = new ItemStore()
 class App extends Component {
     handleKeys = (e) => {
         const commands = {
-            'ArrowUp': itemStore.selectPreviousSibling,
-            'ArrowDown': itemStore.selectNextSibling,
+            'ArrowUp': () => {
+                itemStore.selectPreviousSibling()
+                || itemStore.selectParent()
+            },
+            'ArrowDown': () => {
+                itemStore.selectFirstChild()
+                || itemStore.selectNextSibling()
+                || itemStore.selectNextParentSibling()
+            },
             'ArrowLeft': itemStore.selectParent,
             'ArrowRight': itemStore.selectFirstChild,
             'Backspace': itemStore.removeSelected,
