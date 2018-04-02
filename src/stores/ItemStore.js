@@ -4,6 +4,7 @@ configure({ enforceActions: true })
 
 const NEXT_SIBLING = 'NEXT_SIBLING'
 const PREVIOUS_SIBLING = 'PREVIOUS_SIBLING'
+const LOCAL_STORAGE_KEY = 'organizr_items'
 
 const config = {
     SELECT_NEW_ITEM: false,
@@ -13,7 +14,22 @@ const config = {
 
 class ItemStore {
     constructor() {
-        this._createRoot()
+        const initialData = localStorage.getItem(LOCAL_STORAGE_KEY)
+        let loaded = false
+
+        try {
+            if (initialData) {
+                this.loadList(JSON.parse(initialData))
+            }
+
+            loaded = true
+        } catch (e) {
+            console.log('no data on localstorage...')
+        }
+
+        if (!loaded) {
+            this.initProject()
+        }
     }
 
     @observable
@@ -21,7 +37,13 @@ class ItemStore {
 
     @computed
     get list() {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this._list))
         return this._list.filter(item => !item.deleted)
+    }
+
+    @action
+    loadList = (list) => {
+        this._list = list
     }
 
     @action
@@ -246,7 +268,8 @@ class ItemStore {
     _getSiblingsIdList = (item) => this.findItemsByParentId(item.parentId)
         .map(sibling => sibling.id)
 
-    _createRoot() {
+    initProject() {
+        this.loadList([])
         this.addItem({
             id: config.ROOT_ID,
             title: config.ROOT_LABEL,
