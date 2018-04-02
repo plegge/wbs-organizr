@@ -33,9 +33,8 @@ class App extends Component {
             'Enter': this.addSubItem,
         }
 
-        if (Object.keys(commands).includes(e.key)) {
-            commands[e.key]()
-        }
+        Promise.resolve()
+            .then(commands[e.key])
     }
 
     componentDidMount() {
@@ -66,6 +65,8 @@ class App extends Component {
     render() {
         const rootItem = itemStore.findItemById(ROOT_ID)
         return <div className="App" onKeyPress={this.handleKeys}>
+            <h1>Project Name!</h1>
+
             <ListItem item={rootItem}
                 id={rootItem.id}
                 key={rootItem.id}

@@ -7,7 +7,7 @@ class ListItem extends Component {
             return
         }
 
-        const title = prompt('Item', this.props.item.title)
+        const title = prompt('Item name', this.props.item.title)
         if (title) {
             this.props.store.updateItemById(this.props.id, {
                 ...this.props.item,
@@ -39,7 +39,7 @@ class ListItem extends Component {
         return <div>
             <div className={classNames}>
                 <span className="title" onClick={this.editItem}>
-                    {`${item.title}`}
+                    {`${item.title} `}
                     <a onClick={this.toggleChildrenVisibility}>
                         ({subItems.length})
                     </a>

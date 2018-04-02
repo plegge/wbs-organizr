@@ -2,7 +2,9 @@
 Simple project to help create and organize sitemaps, in a fast way.
 
 ## TODO:
-- Load/save data from local storage and files
+- Change project title
+- Load/save data from local storage / files
+- List saved projects
 - Styles
-- Show/hide children
+- Fix key navigation through hidden children
 - Create properties for items
