@@ -11,7 +11,8 @@ class App extends Component {
     handleKeys = (e) => {
         const commands = {
             'ArrowUp': () => {
-                itemStore.selectPreviousSibling()
+                itemStore.selectLastChildFromPreviousSibling()
+                || itemStore.selectPreviousSibling()
                 || itemStore.selectParent()
             },
             'ArrowDown': () => {

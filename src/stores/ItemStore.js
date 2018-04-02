@@ -136,6 +136,41 @@ class ItemStore {
     }
 
     @action
+    selectLastChildFromPreviousSibling = () => {
+
+        const previousSiblingId = this._findSibling(this.selectedItem, PREVIOUS_SIBLING)
+
+        if (!previousSiblingId) {
+            return false
+        }
+
+        let lastChildId = previousSiblingId
+        let found = true
+
+        while (found) {
+            const childId = this.findItemsByParentId(lastChildId)
+                .map(item => item.id)
+                .reduce((selectedId, childId) => childId, null)
+
+            if (childId) {
+                lastChildId = childId
+            } else {
+                found = false
+            }
+        }
+
+        lastChildId = (lastChildId === previousSiblingId)
+            ? null
+            : lastChildId
+
+        if (lastChildId) {
+            this.selectItemById(lastChildId)
+        }
+
+        return lastChildId
+    }
+
+    @action
     removeSelected = () => {
         this.removeItemById(this.selectedItem.id)
     }
