@@ -17,9 +17,11 @@ class ListItem extends Component {
 
     }
 
-    addSubItem = () => {
-        this.props.addSubItem(this.props.id)
-    }
+    addSubItem = () => this.props.addSubItem(this.props.id)
+
+    toggleCheckItem = (e) => this.props
+        .store
+        .toggleCheckItem(this.props.id, !this.props.item.checked)
 
     toggleChildrenVisibility = () => this.props
         .store
@@ -38,8 +40,9 @@ class ListItem extends Component {
 
         return <div>
             <div className={classNames}>
-                <span className="title" onClick={this.editItem}>
-                    {`${item.title} `}
+                <span className="title">
+                    <input type="checkbox" checked={item.checked} onChange={this.toggleCheckItem} />
+                    <span  onClick={this.editItem}>{` ${item.title} `}</span>
                     <a onClick={this.toggleChildrenVisibility}>
                         ({subItems.length})
                     </a>

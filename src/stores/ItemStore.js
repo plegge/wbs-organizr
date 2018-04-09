@@ -47,7 +47,7 @@ class ItemStore {
     }
 
     @action
-    addItem = ({ id, title, parentId, selected, isRoot, deleted, showChildren }) => {
+    addItem = ({ id, title, parentId, selected, isRoot, deleted, showChildren, checked }) => {
         if (id && this.list.map(item => item.id).includes(id)) {
             return id
         }
@@ -60,6 +60,7 @@ class ItemStore {
             isRoot: isRoot || false,
             deleted: deleted || false,
             showChildren: showChildren || false,
+            checked: checked || false,
         }
 
         this._list = this._list.concat(newItem)
@@ -112,6 +113,10 @@ class ItemStore {
             .filter(item => item.selected)
             .reduce((value, item) => item, null)
     }
+
+    @action
+    toggleCheckItem = (id, status) => this._findItemAndApply(id,
+        (item) => ({ ...item, checked: status }))
 
     findItemById = (id) => this.list
         .filter(item => item.id === id)
