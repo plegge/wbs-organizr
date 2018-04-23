@@ -42,9 +42,7 @@ class ItemStore {
     }
 
     @action
-    loadList = (list) => {
-        this._list = list
-    }
+    loadList = (list) => this._list = list
 
     @action
     addItem = ({ id, title, parentId, selected, isRoot, deleted, showChildren, checked }) => {
@@ -165,6 +163,10 @@ class ItemStore {
 
     @action
     selectFirstChild = () => {
+        if (!this.selectedItem.showChildren) {
+            return false
+        }
+
         const childId = this.findItemsByParentId(this.selectedItem.id)
             .map(item => item.id)
             .reduce((selectedId, childId) => selectedId ? selectedId : childId, false)
@@ -189,9 +191,11 @@ class ItemStore {
         let found = true
 
         while (found) {
-            const childId = this.findItemsByParentId(lastChildId)
-                .map(item => item.id)
-                .reduce((selectedId, childId) => childId, null)
+
+            const childId = this.findItemById(lastChildId).showChildren
+                && this.findItemsByParentId(lastChildId)
+                    .map(item => item.id)
+                    .reduce((selectedId, childId) => childId, null)
 
             if (childId) {
                 lastChildId = childId
