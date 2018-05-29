@@ -19,10 +19,12 @@ class ItemStore {
 
         try {
             if (initialData) {
-                this.loadList(JSON.parse(initialData))
+                const data = JSON.parse(initialData)
+                if (data && data.length) {
+                    this.loadList(data)
+                    loaded = true
+                }
             }
-
-            loaded = true
         } catch (e) {
             console.log('no data on localstorage...')
         }
