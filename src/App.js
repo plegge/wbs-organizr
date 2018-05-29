@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import './App.css'
 import ListItem from './components/ListItem'
+import ProjectTitle from './components/ProjectTitle'
 import ItemStore, { ROOT_ID } from './stores/ItemStore'
 
 const itemStore = new ItemStore()
@@ -65,7 +66,7 @@ class App extends Component {
     render() {
         const rootItem = itemStore.findItemById(ROOT_ID)
         return <div className="App" onKeyPress={this.handleKeys}>
-            <h1>Project Name!</h1>
+            <ProjectTitle />
 
             <ListItem item={rootItem}
                 id={rootItem.id}
