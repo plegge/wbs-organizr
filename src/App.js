@@ -1,11 +1,26 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import './App.css'
 import ListItem from './components/ListItem'
 import ProjectTitle from './components/ProjectTitle'
+import ProjectsList from './components/ProjectsList'
 import ItemStore, { ROOT_ID } from './stores/ItemStore'
+import styled from 'styled-components'
 
 const itemStore = new ItemStore()
+
+const AppRoot = styled.div`
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+`
+
+const ProjectDescription = styled.div`
+    width: 100%;
+    box-sizing: border-box;
+    margin-left: 20px;
+`
 
 @observer
 class App extends Component {
@@ -65,15 +80,19 @@ class App extends Component {
 
     render() {
         const rootItem = itemStore.findItemById(ROOT_ID)
-        return <div className="App" onKeyPress={this.handleKeys}>
-            <ProjectTitle />
 
-            <ListItem item={rootItem}
-                id={rootItem.id}
-                key={rootItem.id}
-                store={itemStore}
-                addSubItem={this.addSubItem} />
-        </div>
+        return <AppRoot onKeyPress={this.handleKeys}>
+            <ProjectsList />
+            <ProjectDescription>
+                <ProjectTitle />
+
+                <ListItem item={rootItem}
+                    id={rootItem.id}
+                    key={rootItem.id}
+                    store={itemStore}
+                    addSubItem={this.addSubItem} />
+            </ProjectDescription>
+        </AppRoot>
     }
 }
 
