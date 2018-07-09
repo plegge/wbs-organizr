@@ -6,10 +6,6 @@ import itemStore, { ROOT_ID } from '../stores/ItemStore'
 
 @observer
 export default class ItemListContainer extends Component {
-    constructor(props) {
-        super(props)
-    }
-
     handleKeys = (e) => {
         const commands = {
             'ArrowUp': () => {

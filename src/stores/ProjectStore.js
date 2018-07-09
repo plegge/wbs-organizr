@@ -13,27 +13,31 @@ class ProjectStore {
     constructor() {
         const initialData = localStorage.getItem(LOCAL_STORAGE_PROJECTS_KEY)
         Promise.resolve(initialData)
-            .then(data => JSON.parse(data))
-            .then(data => data && data.length && this.loadFromData(data))
-            .then(loadedData => !loadedData && this.addProject('New Project'))
-            .catch(console.log)
+            .then(JSON.parse)
+            .then(this.loadFromData)
+            .then(this.addFirstProject)
+            .catch(this.addFirstProject)
     }
 
-    @observable
-    loaded = false
+    @computed
+    get loaded() {
+        return this.list.length > 0
+    }
 
     @observable
     list = []
 
     @computed
     get selected() {
+        this.saveData()
         return _first(this.list.filter(project => project.selected))
     }
 
     @action
     loadFromData = (data) => {
-        this.list = data
-        this.loaded = true
+        if (data && data.length) {
+            this.list = data
+        }
     }
 
     @action
@@ -47,7 +51,6 @@ class ProjectStore {
         })
 
         this.selectProject(id)
-        this.loaded = true
     }
 
     @action
@@ -60,9 +63,20 @@ class ProjectStore {
 
     @action
     removeProject = (id) => {
-        const selectLatest = this.selected.id === id
         this.list = this.list.filter(project => project.id !== id)
+        this.list.length
+            ? this.selectProject(this.list[0].id)
+            : this.addFirstProject()
     }
+
+    addFirstProject = () => {
+        if (!this.loaded || this.list.length === 0) {
+            this.addProject('New Project')
+        }
+    }
+
+    saveData = () => localStorage
+        .setItem(LOCAL_STORAGE_PROJECTS_KEY, JSON.stringify(this.list))
 }
 
 const projectStore = new ProjectStore()
