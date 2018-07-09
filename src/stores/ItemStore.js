@@ -1,4 +1,9 @@
-import { action, computed, configure, observable } from 'mobx'
+import {
+    action,
+    computed,
+    configure,
+    observable
+} from 'mobx'
 
 configure({ enforceActions: true })
 
@@ -292,5 +297,7 @@ class ItemStore {
     }
 }
 
-export default ItemStore
+const itemStore = new ItemStore()
+
+export default itemStore
 export const ROOT_ID = config.ROOT_ID
