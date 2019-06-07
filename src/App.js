@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
 
-import ProjectListContainer from './containers/ProjectListContainer'
-import CurrentProjectContainer from './containers/CurrentProjectContainer'
-import AppRoot from './components/AppRoot'
+import SidebarContainer from './containers/SidebarContainer'
+import MainPageContainer from './containers/MainPageContainer'
+import AppRoot from './ui/AppRoot'
 
 class App extends Component {
     render() {
         return <AppRoot>
-            <ProjectListContainer />
-            <CurrentProjectContainer />
+            <SidebarContainer />
+            <MainPageContainer />
         </AppRoot>
     }
 }
